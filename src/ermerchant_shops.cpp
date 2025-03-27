@@ -826,3 +826,42 @@ void ermerchant::set_shop_open(bool shop_open)
 {
     is_shop_open = shop_open;
 }
+
+void ShopItemCache::loadPage(size_t pageIndex) {
+    if (pageIndex == currentPage) return;
+
+    // Unload current page
+    unloadPage(currentPage);
+
+    // Load new page
+    size_t startIndex = pageIndex * PAGE_SIZE;
+    size_t endIndex = std::min(startIndex + PAGE_SIZE, getTotalItems());
+
+    for (size_t i = startIndex; i < endIndex; i++) {
+        ShopItem* item = itemPool.allocate();
+        // Initialize item data here
+        activeItems.push_back(item);
+    }
+
+    currentPage = pageIndex;
+}
+
+void ShopItemCache::unloadPage(size_t pageIndex) {
+    for (auto* item : activeItems) {
+        itemPool.deallocate(item);
+    }
+    activeItems.clear();
+}
+
+ShopItem* ShopItemCache::getItem(size_t index) {
+    size_t pageIndex = index / PAGE_SIZE;
+    if (pageIndex != currentPage) {
+        loadPage(pageIndex);
+    }
+    return activeItems[index % PAGE_SIZE];
+}
+
+void ShopItemCache::cleanup() {
+    unloadPage(currentPage);
+    currentPage = 0;
+}

@@ -84,6 +84,7 @@ add_library(EldenRingMerchantMod SHARED
   src/ermerchant_messages.hpp
   src/ermerchant_messages.cpp
   src/ermerchant_messages_by_lang.cpp
+  src/ermerchant_memory.hpp
   src/dllmain.cpp)
 
 set_target_properties(EldenRingMerchantMod PROPERTIES OUTPUT_NAME "ermerchant")

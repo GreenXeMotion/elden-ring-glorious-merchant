@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ermerchant_memory.hpp"
+
 namespace ermerchant
 {
 
@@ -37,5 +39,19 @@ static constexpr long long dlc_miscellaneous_items = 9390000;
 void setup_shops();
 
 void set_shop_open(bool);
+
+class ShopItemCache {
+private:
+    static constexpr size_t PAGE_SIZE = 50;
+    std::vector<ShopItem*> activeItems;
+    MemoryPool<ShopItem> itemPool;
+    size_t currentPage = 0;
+
+public:
+    void loadPage(size_t pageIndex);
+    void unloadPage(size_t pageIndex);
+    ShopItem* getItem(size_t index);
+    void cleanup();
+};
 
 }
